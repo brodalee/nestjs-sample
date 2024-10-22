@@ -6,6 +6,7 @@ import { DocumentBuilder, OpenAPIObject, SwaggerModule } from '@nestjs/swagger';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import * as Sentry from '@sentry/nestjs';
 import { nodeProfilingIntegration } from '@sentry/profiling-node';
+import {AuthenticationGuard} from "./@guards/authentication.guard";
 
 Sentry.init({
   dsn: process.env.SENTRY_DSN,
@@ -31,6 +32,9 @@ async function bootstrap(): Promise<void> {
   app.useGlobalPipes(new ValidationPipe());
   app.use(helmet());
   app.disable('x-powered-by');
+  app.useBodyParser('json', { limit: '10mb' });
+  // app.useGlobalGuards(new AuthenticationGuard());
+  // => pour une utilisation sur toutes les routes !
 
   setUpSwagger(app);
 
